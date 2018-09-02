@@ -24,10 +24,12 @@ CONFIG += c++11
 
 SOURCES += \
         main.cpp \
-        mainwindow.cpp
+        mainwindow.cpp \
+    vector3d.cpp
 
 HEADERS += \
-        mainwindow.h
+        mainwindow.h \
+    vector3d.h
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
