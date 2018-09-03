@@ -47,15 +47,15 @@ void MainWindow::str2vec(const QStringList list) {
     }
     switch (v_float.size()) {
     case 1:
-      container.push_back(vector3d<float>(v_float[0], 0, 0));
+      container.push_back(vector3d(v_float[0], 0, 0));
       v_float.clear();
       break;
     case 2:
-      container.push_back(vector3d<float>(v_float[0], v_float[1], 0));
+      container.push_back(vector3d(v_float[0], v_float[1], 0));
       v_float.clear();
       break;
     case 3:
-      container.push_back(vector3d<float>(v_float[0], v_float[1], v_float[2]));
+      container.push_back(vector3d(v_float[0], v_float[1], v_float[2]));
       v_float.clear();
       break;
     default:
@@ -69,7 +69,6 @@ QStringList MainWindow::vec2str() {
   QStringList list;
   QString qs;
   for (size_t it = 0; it < container.size(); it++) {
-    ss << "XYZ: (";
     ss << container[it];
     qs = QString::fromStdString(ss.str());
     list.append(qs);

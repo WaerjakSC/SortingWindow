@@ -1,23 +1,18 @@
-#ifndef VECTOR3D_H
-#define VECTOR3D_H
+#ifndef VECfloatOR3D_H
+#define VECfloatOR3D_H
 
+#include <iostream>
 #include <vector>
 
-template <class T> class vector3d {
+class vector3d {
 public:
-  vector3d();
-  vector3d(T x, T y, T z) : X(0), Y(0), Z(0) {
-    X = x;
-    Y = y;
-    Z = z;
-  }
+  vector3d(float x = 0.0, float y = 0.0, float z = 0.0) : X(x), Y(y), Z(z) {}
 
-  const T getX() { return X; }
-  const T getY() { return Y; }
-  const T getZ() { return Z; }
+  float getX() { return X; }
+  float getY() { return Y; }
+  float getZ() { return Z; }
 
-  // This should work, right?
-  T SumXYZ() { return X + Y + Z; }
+  float SumXYZ() { return X + Y + Z; }
 
   friend bool operator>(vector3d &vector1, vector3d &vector2) {
     return (vector1.SumXYZ() >
@@ -25,15 +20,13 @@ public:
                                // auto-complete but too tired to test it now
   }
 
-  friend std::ostream &operator<<(std::ostream &out, vector3d const &t) {
-    out << t.X << ", " << t.Y << ", " << t.Z << ")";
+  friend std::ostream &operator<<(std::ostream &out, const vector3d &vector) {
+    out << "XYZ(" << vector.X << ", " << vector.Y << ", " << vector.Z << ")";
     return out;
   }
 
 private:
-  T X;
-  T Y;
-  T Z;
+  float X, Y, Z;
 };
 
-#endif // VECTOR3D_H
+#endif // VECfloatOR3D_H

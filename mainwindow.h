@@ -5,7 +5,6 @@
 #include <QMainWindow>
 #include <QtWidgets>
 
-template <class T> class vector3d;
 class MainWindow : public QMainWindow {
   Q_OBJECT
 
@@ -19,8 +18,8 @@ public:
     // the largest object needs to be printed first, aka in slot 0 of the
     // returned vector
     size_t i, j;
-    int flag = 1;         // set flag to 1 to start first pass
-    vector3d<float> temp; // holding variable
+    int flag = 1;  // set flag to 1 to start first pass
+    vector3d temp; // holding variable
     auto numLength = tempVector.size();
     for (i = 1; (i <= numLength) && flag; i++) {
       flag = 0;
@@ -49,7 +48,7 @@ private:
   QPushButton *sortButton;
   QPushButton *closeButton;
   std::vector<float> v_float;
-  std::vector<vector3d<float>> container;
+  std::vector<vector3d> container;
 };
 
 #endif // MAINWINDOW_H
