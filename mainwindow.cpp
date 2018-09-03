@@ -32,67 +32,81 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
 
 MainWindow::~MainWindow() {}
 
-void MainWindow::str2vec() {
-  std::string tempS;
-  size_t foundAt{0};
+void MainWindow::str2vec(const QStringList list) {
   // Read through s to find valid numbers. Every time a \n is found, create a
   // new vector3d object -- currently I only do this for vector3d which kinda
   // defeats the point of the template sorting function, but to be fair that
   // function can be used elsewhere and I guess I could always just add a bunch
   // of if statements to find out what type it is, in case it's just one int per
   // line or one float per line or whatever
-  for (size_t i = 0; i < s.size(); i++) {
-    //    size_t lastline = foundAt; // First time will initialize to 0
-    //    foundAt = s.find('\n');
-    //    tempS = s.substr(lastline, foundAt); // Read the first value into
-    //    tempS
-    std::stringstream ss(s);
+  for (auto i = 0; i < list.size(); i++) {
+    std::stringstream ss(list.at(i).toStdString());
     float tempNum;
     while (ss >> tempNum) {
       v_float.push_back(tempNum);
-      // Need an if statement here or something so that it only goes down here
-      // if newline is found
-      if ((foundAt = ss.str().find('\n', foundAt)) != std::string::npos) //
-        switch (v_float.size()) {
-        case 1:
-          container.push_back(vector3d<float>(v_float[0], 0, 0));
-          v_float.clear();
-          break;
-        case 2:
-          container.push_back(vector3d<float>(v_float[0], v_float[1], 0));
-          v_float.clear();
-          break;
-        case 3:
-          container.push_back(
-              vector3d<float>(v_float[0], v_float[1], v_float[2]));
-          v_float.clear();
-          break;
-        default:
-          break; // Throw an error message here
-        }
-      foundAt++;
+    }
+    switch (v_float.size()) {
+    case 1:
+      container.push_back(vector3d<float>(v_float[0], 0, 0));
+      v_float.clear();
+      break;
+    case 2:
+      container.push_back(vector3d<float>(v_float[0], v_float[1], 0));
+      v_float.clear();
+      break;
+    case 3:
+      container.push_back(vector3d<float>(v_float[0], v_float[1], v_float[2]));
+      v_float.clear();
+      break;
+    default:
+      break; // Throw an error message here
     }
   }
 }
 
-void MainWindow::vec2str() {
+QStringList MainWindow::vec2str() {
   std::stringstream ss;
-  s.clear();
-  for (auto it = container.begin(); it != container.end(); it++) {
-    ss << *it;
-    ss << '\n';
-    s.append(ss.str());
+  QStringList list;
+  QString qs;
+  for (size_t it = 0; it < container.size(); it++) {
+    ss << "XYZ: (";
+    ss << container[it];
+    qs = QString::fromStdString(ss.str());
+    list.append(qs);
+    // Empty ss for next loop
+    ss.clear();
+    ss.str(std::string());
   }
+  return list;
 }
 void MainWindow::close() { QMainWindow::close(); }
 
+QStringList MainWindow::splitByLines(const QTextDocument *doc) {
+  if (!doc)
+    return QStringList();
+  QStringList ret;
+  QTextBlock tb = doc->begin();
+  while (tb.isValid()) {
+    QString blockText = tb.text();
+    Q_ASSERT(tb.layout());
+    if (!tb.layout())
+      continue;
+    for (int i = 0; i != tb.layout()->lineCount(); ++i) {
+      QTextLine line = tb.layout()->lineAt(i);
+      ret.append(blockText.mid(line.textStart(), line.textLength()));
+    }
+    tb = tb.next();
+  }
+  return ret;
+}
 void MainWindow::sort() {
   container.clear();
-  QString qs = editor->toPlainText();
-  s = qs.toStdString();
-  //  sortingFunction(container);
-  str2vec();
-  vec2str();
-  qs.fromStdString(s);
-  sortedText->appendPlainText(qs);
+  QStringList qsList = splitByLines(editor->document());
+  str2vec(qsList);
+  sortingFunction(container);
+  qsList = vec2str();
+  while (!qsList.empty()) {
+    sortedText->appendPlainText(qsList.first());
+    qsList.erase(qsList.begin());
+  }
 }
